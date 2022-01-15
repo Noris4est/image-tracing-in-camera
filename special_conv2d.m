@@ -36,7 +36,7 @@ for i=1:rows_A
         плоскости изображения.
         %}
         B_cur=interp3(grid_m,grid_n,r_arr,B,grid_m,grid_n,r_cur);
-        angle_cur=angle(x_cur+1i*y_cur);
+        angle_cur=angle(x_cur+1i*y_cur);%определение углового полож. точки.
         if angle_cur<0
             angle_cur=angle_cur+2*pi;
         end
