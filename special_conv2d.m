@@ -1,12 +1,11 @@
-%% Реализация нелинейной двумерной свертки матриц
+%% Реализация двумерной свертки матрицы c переменным ядром
 function [C] = special_conv2d(A,x_ref,y_ref,dxy,B,r_arr,add_value_n)
 %dxy mkm - шаг дискретизации
 %r_arr [mm, ... mm]
 %xref yref mm - опорные координаты входного сегмента изображения A
-%A,B - входные матрицы. C-возвращаемая матрица.
+%A - входная const матрица. C-возвращаемая матрица.
+%B - матрица (переменное ядро)
 %add_n - относительный параметр дополнения матрицы 0...1.
-%граничения на матрицу B - квадратная, число строк (столбцов) нечетное.
-%Размер матрицы B меньше размеров матрицы A в двух измерениях.
 addValue=add_value_n*max(A,[],'all');%
 %дополнение матрицы A для сохранения размерности при свертке. 
 %Добавляются Nadd строк/столбцов со всех сторон.
@@ -18,9 +17,11 @@ A_expansion=addValue*ones(rows_A+2*Nadd_n,columns_A+2*Nadd_m);%Матрица-з
 A_expansion(Nadd_n+1:rows_A+Nadd_n,Nadd_m+1:columns_A+Nadd_m)=A;
 Result=zeros(size(A));
 dxy=dxy/1000;
-Tr=dxy*(size(A,1)-1);
-x_cur=-Tr/2+x_ref;
-y_cur=Tr/2+y_ref;
+Tr_y=dxy*(size(A,1)-1);
+Tr_x=dxy*(size(A,2)-1);
+
+x_cur=-Tr_x/2+x_ref;
+y_cur=Tr_y/2+y_ref;
 grid_n=1:size(B,1);
 grid_m=1:size(B,2);
 for i=1:rows_A
@@ -49,7 +50,7 @@ for i=1:rows_A
         Result(i,j)=sum(PartAe.*B_reverse,'all');
         x_cur=x_cur+dxy;
     end
-    x_cur=-Tr/2+x_ref;
+    x_cur=-Tr_x/2+x_ref;
     y_cur=y_cur-dxy;
 end
 C=Result;
